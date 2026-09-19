@@ -1,7 +1,7 @@
 # 这些都是虚构的练习数据。
 # text 是评论内容，sentiment 是手动设置的评价标签。
 comments = [
-    {"text": "画面很好看", "sentiment": "正面"},
+    {"text": "画面很好看", "sentiment": "负面"},
     {"text": "战斗很有意思", "sentiment": "正面"},
     {"text": "剧情让我很投入", "sentiment": "正面"},
     {"text": "音乐非常好听", "sentiment": "正面"},
