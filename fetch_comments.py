@@ -1,5 +1,6 @@
 import requests
-
+import json
+from pathlib import Path
 # 示例游戏：星露谷物语，它在 Steam 上的游戏编号是 413150。
 app_id = "413150"
 
@@ -13,7 +14,7 @@ params = {
     "filter": "recent",        # 按发布时间从新到旧排序
     "review_type": "all",      # 推荐和不推荐都要
     "purchase_type": "all",    # 包含不同购买来源的评测
-    "num_per_page": 20,        # 本次最多获取 20 条
+    "num_per_page": 200,        # 本次最多获取 200 条
     "cursor": "*",            # 从第一批开始获取
 }
 
@@ -42,3 +43,21 @@ for review in reviews:
         print("玩家选择：推荐")
     else:
         print("玩家选择：不推荐")
+
+# 整理出这次练习需要的数据。
+comments = []
+
+for review in reviews:
+    comments.append({
+        "text": review["review"],
+        "recommended": review["voted_up"]
+    })
+
+# 文件保存在当前 Python 脚本所在的文件夹。
+file_path = Path(__file__).with_name("comments.json")
+
+# 将数据写入 JSON 文件。
+with file_path.open("w", encoding="utf-8") as file:
+    json.dump(comments, file, ensure_ascii=False, indent=2)
+
+print(f"已保存 {len(comments)} 条评论到：{file_path}")
