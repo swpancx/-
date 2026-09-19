@@ -1,8 +1,59 @@
 import requests
 import json
 from pathlib import Path
-# 示例游戏：星露谷物语，它在 Steam 上的游戏编号是 413150。
-app_id = "413150"
+
+# 让用户输入游戏名称。
+game_name = input("请输入游戏名称：").strip()
+
+if not game_name:
+    raise SystemExit("游戏名称不能为空，请重新运行。")
+
+# 向 Steam 商店搜索游戏。
+search_response = requests.get(
+    "https://store.steampowered.com/api/storesearch/",
+    params={
+        "term": game_name,
+        "l": "schinese",
+        "cc": "CN"
+    },
+    timeout=20
+)
+
+search_response.raise_for_status()
+search_data = search_response.json()
+
+# 保留带有应用编号的搜索结果。
+games = []
+
+for item in search_data.get("items", []):
+    if item.get("type") == "app":
+        games.append(item)
+
+if not games:
+    raise SystemExit("没有找到结果，请尝试游戏的商店正式名称或英文名。")
+
+# 为每个候选结果显示一个序号。
+print("搜索结果：")
+
+for index, game in enumerate(games, start=1):
+    print(f"{index}. {game['name']}（编号：{game['id']}）")
+
+# 用户选择要查询的游戏。
+try:
+    choice = int(input("请输入要查询的序号："))
+except ValueError:
+    raise SystemExit("序号需要填写整数，请重新运行。")
+
+if choice < 1 or choice > len(games):
+    raise SystemExit("序号超出了搜索结果范围，请重新运行。")
+
+# 列表从 0 开始计数，因此要减 1。
+selected_game = games[choice - 1]
+
+app_id = str(selected_game["id"])
+game_name = selected_game["name"]
+
+print(f"正在获取《{game_name}》的评测……")
 
 # 获取这个游戏的评测数据。
 url = f"https://store.steampowered.com/appreviews/{app_id}"
