@@ -60,13 +60,13 @@ url = f"https://store.steampowered.com/appreviews/{app_id}"
 
 # 告诉 Steam，我们想获取什么样的数据。
 params = {
-    "json": 1,                 # 返回 JSON 格式的数据
+    "json": 1,
     "language": "schinese",    # 简体中文评测
-    "filter": "recent",        # 按发布时间从新到旧排序
-    "review_type": "all",      # 推荐和不推荐都要
-    "purchase_type": "all",    # 包含不同购买来源的评测
-    "num_per_page": 200,        # 本次最多获取 200 条
-    "cursor": "*",            # 从第一批开始获取
+    "filter": "recent",        # 按发布时间，从新到旧
+    "review_type": "all",      # 推荐、不推荐都包含
+    "purchase_type": "all",    # 不限制购买来源
+    "num_per_page": 100,       # 最多获取 100 条
+    "cursor": "*",             # 从第一批开始
 }
 
 # 发送请求，并设置等待超时。
@@ -98,6 +98,11 @@ for review in reviews:
 # 整理出这次练习需要的数据。
 comments = []
 
+comments.append({
+    "text": review["review"],
+    "recommended": review["voted_up"],
+    "created_at": review["timestamp_created"]
+})
 for review in reviews:
     comments.append({
         "text": review["review"],
